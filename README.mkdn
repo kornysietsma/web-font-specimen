@@ -5,7 +5,9 @@ Web Font Specimen - Sinatra Mini App
 ([Nice Web Type](http://nicewebtype.com/)) to help web designers make
 type-setting decisions. 
 It was ported to Compass by [Eric Meyer](http://www.oddbird.net) And then the styles were taken out of that plugin, and put in to a Sinatra App which doesn't require Compass by [Robert Whitney](http://www.robertjwhitney.com)
+... and this fork was made by [Korny Sietsma](http://github.com/kornysietsma) with the following goals:
+ - rework with less-css instead of sass
+ - auto-detect font directories based on convention rather than configuration
+ - user selector for which font to show
 
-
-Copy your font files into a `fonts` directory in your CSS directory. Fill in your normal, italic and bold
-@font-face variables and mixins in `wfs.sass`.
+*This is a work in progress - don't expect anything to work (yet!)*
