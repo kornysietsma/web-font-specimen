@@ -8,9 +8,10 @@ type-setting decisions.
 It was ported to Compass by [Eric Meyer](http://www.oddbird.net) And then the styles were taken out of that plugin, and put in to a Sinatra App which doesn't require Compass by [Robert Whitney](http://www.robertjwhitney.com)
 
 ... and this version was made by [Korny Sietsma](http://github.com/kornysietsma) with the following goals:
-*  rework with css and ruby as needed instead of sass
-*  auto-detect font directories based on convention rather than configuration
-*  display index page as well as individual font pages
+
+* rework with css and ruby as needed instead of sass
+* auto-detect font directories based on convention rather than configuration
+* display index page as well as individual font pages
 
 Note this is more of a homage than a fork - I've reverted many files back from sass to css,
 and from haml to erb, so there isn't a lot of Robert Whitney's fine work left.
@@ -20,23 +21,26 @@ when ruby string manipulation would do the job with somewhat clearer logic, at l
 for people who don't know sass well.
 
 To make this work:
-*  make directories under 'public/fonts' for fonts and groups of fonts
-*  the convention is
-**  any directory with no font files in it is a grouping
-**  any directory with font files in it is a font, and will be named after the directory name
-**  if a font directory has subdirectories with font files in them, they will be assumed to be sub-fonts
+
+* make directories under 'public/fonts' for fonts and groups of fonts
+* the convention is
+* * any directory with no font files in it is a grouping
+* * any directory with font files in it is a font, and will be named after the directory name
+* * if a font directory has subdirectories with font files in them, they will be assumed to be sub-fonts
 
 The expected structure is something like:
-*  public/fonts
-**  Serif
-***  BergamoStd - containing the BergamoStd-Regular.ttf file, plus eot files etc
-****  Bold - containing the BergamoStd-Bold.ttf file, etc
-****  Italic - and so on
+
+* public/fonts
+* * Serif
+* * * BergamoStd - containing the BergamoStd-Regular.ttf file, plus eot files etc
+* * * * Bold - containing the BergamoStd-Bold.ttf file, etc
+* * * * Italic - and so on
 
 This will generate the following URLs:
-*  '/' with an index page showing previews of all the fonts
-*  '/details/Serif/BergamoStd' showing the Specimen page for the standard font, *plus* it uses the Italic and Bold forms explicitly
-*  '/details/Serif/BergamoStd/Bold' showing just the Bold font
-*  '/details/Serif/BergamoStd/Italic' showing just the Italic font
+
+* '/' with an index page showing previews of all the fonts
+* '/details/Serif/BergamoStd' showing the Specimen page for the standard font, *plus* it uses the Italic and Bold forms explicitly
+* '/details/Serif/BergamoStd/Bold' showing just the Bold font
+* '/details/Serif/BergamoStd/Italic' showing just the Italic font
 
 *This is a work in progress - please be tolerant*
