@@ -13,17 +13,17 @@
 
 <body>
  <h1>Web Font Specimen</h1>
- <%  if @fonts.empty? %>
+ <%  if fonts.empty? %>
  <p>No font directories found.</p>
  <p>This application expects fonts to be stored in named subdirectories in the "public/fonts" directory</p>
  <p> See <a href="http://github.com/kornysietsma/web-font-specimen#readme">the readme on github</a> for more.</p>
  <% else %>
  <ul>
-   <%@fonts.each do |font|%>
-   <li><a href="/details/<%= font[:font]%>"><%= font[:font]%> : <span class="<%= font[:font]%>"><%= font[:font]%></span></a>
+   <%fonts.each do |font|%>
+   <li><a href="/details/<%= font[:font]%>"><%= font[:font]%> : <span class="<%= font[:font]%>"><%=sample%></span></a>
      <ul>
        <%font[:children].each do |subfont|%>
-         <li><%= subfont%> : <span class="<%= subfont%>"><%= subfont%></span></li>
+         <li><a href="/details/<%= font[:font]%>/<%=subfont[:style]%>"><%= subfont[:style]%> : <span class="<%= subfont[:family]%>"><%=sample%></span></li>
        <% end %>
      </ul>
    </li>

@@ -14,9 +14,13 @@ p {
 ul {
     font-size: 36px;
     margin-left: 28px;
+    padding: 10px;
 }
 li {
-    padding: 5px;
+    padding: 10px;
+}
+li span {
+    font-size: 30px;
 }
 a {
     text-decoration: none;

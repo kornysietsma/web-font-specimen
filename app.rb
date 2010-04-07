@@ -32,7 +32,7 @@ helpers do
     raise "More than one #{extension} file in #{path}" if files.size > 1
     files.size == 0 ? nil : File.basename(files[0])
   end
-  def single_font(name, path, prefix)
+  def single_font_css(name, path, prefix)
     $stderr.puts "producing css for '#{name}' in path #{path} with prefix #{prefix}"
     eot_file = find_fontfile(path,'eot')
     eot_css = eot_file ? "src: url('#{prefix}#{eot_file}');" : ''
@@ -56,15 +56,22 @@ helpers do
 }
     EOT
   end
+
+  def font_style_css(name, style)
+    raise "Bad font name '#{name}' style '#{style}'" unless valid_font_style? name, style
+    familyname = "#{name}#{style}"
+    single_font_css(familyname, font_dir(name,style),"/fonts/#{name}/#{style}/")
+  end
+
   def font_family_css(name)
     # returns the css for the fonts, plus a list of styles found
     raise "invalid font #{name}" unless valid_font? name
-    all_css = single_font(name,font_dir(name),"/fonts/#{name}/") + "\n"
+    all_css = single_font_css(name,font_dir(name),"/fonts/#{name}/") + "\n"
     styles = {}
     font_styles(name).each do |style|
       $stderr.puts "processing name #{name} style #{style}"
       familyname = "#{name}#{style}"
-      all_css += single_font(familyname,font_dir(name,style),"/fonts/#{name}/#{style}/") + "\n"
+      all_css += font_style_css(name,style) + "\n"
       styles[style] = familyname
     end
     {:css => all_css, :styles => styles}
@@ -105,6 +112,18 @@ get '/stylesheets/:basefont/details.css' do
   output
 end
 
+get '/stylesheets/:basefont/:style/details.css' do
+  content_type 'text/css', :charset => 'utf-8'
+  basefont = params[:basefont]
+  style = params[:style]
+  raise "Bad font name '#{basefont}' style '#{style}'" unless valid_font_style? basefont, style
+  fontinfo = font_family_css(basefont)
+  stylefamily = fontinfo[:styles][style]
+  output = "body, .typeface1 { font-family: \"#{stylefamily}\", Georgia; }\n"
+  output += ".typeface2 { font-family: Verdana; }\n"
+  output
+end
+
 get '/stylesheets/main_fonts.css' do
   content_type 'text/css', :charset => 'utf-8'
   output = ""
@@ -119,29 +138,27 @@ get '/stylesheets/main_fonts.css' do
 end
 
 get '/' do
-  @fonts = []
+  fonts = []
   all_fonts.each do |font|
     styles = font_family_css(font)[:styles]
-    @fonts << {:font => font, :children => styles.values}
+    children = styles.collect { |key, value| {:style => key, :family => value} }
+    fonts << {:font => font, :children => children }
   end
-  erb :index
+  erb :index, :locals => {:fonts => fonts, :sample => "Handglove 123"}
 end
 
 get '/details/:basefont' do
-  @basefont = params[:basefont]
-  raise "Bad font name '#{@basefont}'" unless valid_font? @basefont
-  erb :details
+  basefont = params[:basefont]
+  raise "Bad font name '#{basefont}'" unless valid_font? basefont
+  erb :details, :locals => {:basefont => basefont, :css_path => basefont, :fontname => basefont}
 end
 
-#get '/stylesheets/:name.css' do
-#  content_type 'text/css', :charset => 'utf-8'
-#  less :"stylesheets/#{params[:name]}"
-#end
+get '/details/:basefont/:style' do
+  basefont = params[:basefont]
+  style = params[:style]
+  raise "Bad font name '#{basefont}' style '#{style}'" unless valid_font_style? basefont, style
+  css_path = "#{basefont}/#{style}"
+  fontname = "#{basefont} #{style}"
+  erb :details, :locals => {:basefont => basefont, :css_path => css_path, :fontname => fontname}
+end
 
-#get '/' do
-#  haml :index
-#end
-
-#get '/:view' do
-#  haml :"#{params[:view]}"
-#end
