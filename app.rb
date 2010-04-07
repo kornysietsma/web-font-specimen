@@ -5,10 +5,15 @@ require 'lib/fontinfo'
 
 FONT_DIR = File.join(File.dirname(__FILE__),'public','fonts')
 
+[:eot, :woff, :ttf, :otf ].each do |ext|
+  mime_type ext, 'application/octet-stream'
+end
+mime_type :svg, 'image/svg+xml'
+
 helpers do
   def fonts
     # cache just in case - though it'll be re-generated on each request, of course:
-    @fonts ||= FontDir.new(FONT_DIR,"/")
+    @fonts ||= FontDir.new(FONT_DIR,"")
   end
 end
 
@@ -59,6 +64,6 @@ get %r{/details/([\w_\-/]+)} do
   $stderr.puts params.inspect
   font_path = params[:captures].first
   font = fonts.font_by_path(font_path)
-  erb :details, :locals => {:basefont => font.familyname, :css_path => font.url_base[0..-2], :fontname => font.familyname}
+  erb :details, :locals => {:basefont => font.familyname, :css_path => font.url_base, :fontname => font.familyname}
 end
 

@@ -15,7 +15,7 @@ class FontDir
       next if filename =~ /\.\.?/
       child_path = File.join(@font_path, filename)
       next unless File.directory? child_path
-      child_url = "#{@url_base}#{filename}/"
+      child_url = @url_base == '' ? filename : "#{@url_base}/#{filename}"
       unless Dir.glob(File.join(child_path,FONT_FILE_PATTERN)).empty?
         @fonts << Font.new(child_path, child_url, filename)
       else
@@ -36,7 +36,6 @@ class FontDir
       @children.collect {|child| child.all_families}).flatten
   end
   def font_by_path(subpath)
-    $stderr.puts "looking for font by path: '#{subpath}'"
     # note subpath starts with no '/', and it's a child of current path
     first, rest = subpath.split('/',2)
     if rest
@@ -53,7 +52,10 @@ class FontDir
   end
 
   def html_index
-    # assumes we are already in a parent's 'ul' list
+    # Render the html snippet for the index page
+    # This would be better in the index.erb file
+    #   - but nesting erb templates got beyond me, so it's here.
+    # assumes we are inside a <ul> node
     @children.collect {|child| "<li>\n#{child.name} :<ul>\n" + child.html_index + "</ul>\n</li>\n"}.join + \
       @fonts.collect {|font| "<li>\n" + font.html_index + "</li>\n"}.join
   end
@@ -62,7 +64,6 @@ end
 class Font
   attr_accessor :styles, :style, :family, :url_base
   def initialize(font_path, url_base, family, style = nil)
-    $stderr.puts "initializing font with path '#{font_path}', url '#{url_base}',family '#{family}'"
     raise "Invalid Font directory #{font_path}" if Dir.glob(File.join(font_path,FontDir::FONT_FILE_PATTERN)).empty?
     @font_path = font_path
     @url_base = url_base
@@ -82,8 +83,8 @@ class Font
       next if filename =~ /\.\.?/
       child_path = File.join(@font_path, filename)
       next unless File.directory? child_path
-      child_url = "#{@url_base}#{filename}/"
-      unless Dir.glob(File.join(child_path,FontDir::FONT_FILE_PATTERN)).empty?
+      child_url = "#{@url_base}/#{filename}"
+      if !Dir.glob(File.join(child_path,FontDir::FONT_FILE_PATTERN)).empty?
         styles[filename] = Font.new(child_path, child_url, @family, filename)
       # no 'else' - if it's not a font dir, we look no deeper
       end
@@ -97,17 +98,17 @@ class Font
   end
   def css
     eot_file = Font.find_fontfile(@font_path,'eot')
-    eot_css = eot_file ? "src: url('/fonts#{@url_base}#{eot_file}');" : ''
+    eot_css = eot_file ? "src: url('/fonts/#{@url_base}/#{eot_file}');" : ''
     local_css = "local('#{familyname}')"
     woff_file = Font.find_fontfile(@font_path,'woff')
-    woff_css = woff_file ? "url('/fonts#{@url_base}#{woff_file}') format(\"woff\")" : ''
+    woff_css = woff_file ? "url('/fonts/#{@url_base}/#{woff_file}') format(\"woff\")" : ''
     otf_file = Font.find_fontfile(@font_path,'otf')
-    otf_css = otf_file ? "url('/fonts#{@url_base}#{otf_file}') format(\"opentype\")" : ''
+    otf_css = otf_file ? "url('/fonts/#{@url_base}/#{otf_file}') format(\"opentype\")" : ''
     ttf_file = Font.find_fontfile(@font_path,'ttf')
-    ttf_css = ttf_file ? "url('/fonts#{@url_base}#{ttf_file}') format(\"truetype\")" : ''
+    ttf_css = ttf_file ? "url('/fonts/#{@url_base}/#{ttf_file}') format(\"truetype\")" : ''
     svg_file = Font.find_fontfile(@font_path,'svg')
     svg_suffix = familyname  # TODO: better svn id detection???
-    svg_css = svg_file ? "url('/fonts#{@url_base}#{svg_file}##{svg_suffix}') format(\"svg\")" : ''
+    svg_css = svg_file ? "url('/fonts/#{@url_base}/#{svg_file}##{svg_suffix}') format(\"svg\")" : ''
 
     combo_css = [local_css,woff_css,otf_css,ttf_css,svg_css].reject{|txt| txt.empty?}.join(", ")
     <<-EOT
@@ -129,11 +130,11 @@ class Font
     if basefont?
       [familyname] + @styles.values.collect {|style| style.familyname}
     else
-      familyname
+      [familyname]
     end
   end
   def own_html_index
-    %Q{<a href="/details#{@url_base[0..-2]}">#{familyname} : <span class="#{familyname}">Lorem Ipsum</span></a>\n}
+    %Q{<a href="/details/#{@url_base}">#{familyname} : <span class="#{familyname}">Lorem Ipsum</span></a>\n}
   end
   def html_index
     # assume inside a parent's li element
