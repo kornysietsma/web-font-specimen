@@ -8,5 +8,7 @@ http://www.oddbird.net
 Sinatra Mini-App by Robert Whitney
 http://robertjwhitney.com
 
+Multi-font verson of Sinatra Mini-App by Kornelis Sietsma
+
 Feel free to edit and re-release this plugin, wfs.css and the markup that uses it. They are all licensed under a Creative Commons Attribution 3.0 License:
 http://creativecommons.org/licenses/by/3.0/us/
