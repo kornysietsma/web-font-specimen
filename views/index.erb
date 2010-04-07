@@ -10,7 +10,6 @@
 <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/main.css" />
 </head>
 
-
 <body>
  <h1>Web Font Specimen</h1>
  <%  if fonts.empty? %>
@@ -19,15 +18,7 @@
  <p> See <a href="http://github.com/kornysietsma/web-font-specimen#readme">the readme on github</a> for more.</p>
  <% else %>
  <ul>
-   <%fonts.each do |font|%>
-   <li><a href="/details/<%= font[:font]%>"><%= font[:font]%> : <span class="<%= font[:font]%>"><%=sample%></span></a>
-     <ul>
-       <%font[:children].each do |subfont|%>
-         <li><a href="/details/<%= font[:font]%>/<%=subfont[:style]%>"><%= subfont[:style]%> : <span class="<%= subfont[:family]%>"><%=sample%></span></li>
-       <% end %>
-     </ul>
-   </li>
-   <% end %>
+   <%= fonts.html_index %>
  </ul>
  <% end %>
 </body>
