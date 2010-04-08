@@ -27,7 +27,7 @@ How to use this app
 You probably need a working knowledge of ruby and rubygems, I'm afraid.
 
 * Make sure you have the 'sinatra' gem loaded - tested with 1.0, you also need 'rack' but it's a pre-requisite.
-* Get a set of fonts - the simplest way is to go to (http://www.fontsquirrel.com/) , browse to the 'font-face kits' tab, and fetch a nice looking font or two.
+* Get a set of fonts - the simplest way is to go to [Font Squirrel](http://www.fontsquirrel.com/) , browse to the 'font-face kits' tab, and fetch a nice looking font or two.
 * Under the 'public/fonts' directory of this app, create a directory with the same name as your font, or something similar, e.g. "BergamoStd"
 * If your font has specific font files for Bold, Italic, etc, make directories under the main font for each variant, e.g. "BergamoStd/Bold", "BergamoStd/Italic", "BergamoStd/BoldItalic"
 * Unzip the font kit you grabbed earlier
