@@ -141,7 +141,8 @@ class Font
     if !basefont?
       own_html_index
     else
-      own_html_index + "<ul>\n" + @styles.values.collect{|style| "<li>" + style.html_index + "</li>"}.join("\n") + "\n</ul>\n"
+      child_html = @styles.empty? ? "" : "<ul>\n" + @styles.values.collect{|style| "<li>" + style.html_index + "</li>"}.join("\n") + "\n</ul>\n"
+      own_html_index + child_html
     end
   end
 end

@@ -34,15 +34,18 @@ get %r{/stylesheets/details/([\w_\-/]+).css} do
   font = fonts.font_by_path(font_path)
   output = "body, .typeface1 { font-family: \"#{font.familyname}\", Georgia; }\n"
   if font.basefont?
-    if font.styles['Italic']
-      output += "body em, .typeface1 em { font-family: \"#{font.styles['Italic'].familyname}\", Georgia; }\n"
+    italic_style = font.styles.keys.detect {|style| style.downcase == 'italic'}
+    if italic_style
+      output += "body em, .typeface1 em { font-family: \"#{font.styles[italic_style].familyname}\", Georgia; }\n"
     end
-    if font.styles['Bold']
-      output += "body strong, .typeface1 strong { font-family: \"#{font.styles['Bold'].familyname}\", Georgia; }\n"
+    bold_style = font.styles.keys.detect {|style| style.downcase == 'bold'}
+    if bold_style
+      output += "body strong, .typeface1 strong { font-family: \"#{font.styles[bold_style].familyname}\", Georgia; }\n"
     end
-    if font.styles['BoldItalic']
-      output += "body strong em, .typeface1 strong em { font-family: \"#{font.styles['BoldItalic'].familyname}\", Georgia; }\n"
-      output += "body em strong, .typeface1 em strong { font-family: \"#{font.styles['BoldItalic'].familyname}\", Georgia; }\n"
+    bi_style = font.styles.keys.detect {|style| /bold.?italic/ =~ style.downcase }
+    if bi_style
+      output += "body strong em, .typeface1 strong em { font-family: \"#{font.styles[bi_style].familyname}\", Georgia; }\n"
+      output += "body em strong, .typeface1 em strong { font-family: \"#{font.styles[bi_style].familyname}\", Georgia; }\n"
     end
   end
   output += ".typeface2 { font-family: Verdana; }\n"
@@ -57,11 +60,10 @@ get '/stylesheets/main_fonts.css' do
 end
 
 get '/' do
-  erb :index, :locals => {:fonts => fonts, :sample => "Handglove 123"}
+  erb :index, :locals => {:fonts => fonts}
 end
 
 get %r{/details/([\w_\-/]+)} do
-  $stderr.puts params.inspect
   font_path = params[:captures].first
   font = fonts.font_by_path(font_path)
   erb :details, :locals => {:basefont => font.familyname, :css_path => font.url_base, :fontname => font.familyname}

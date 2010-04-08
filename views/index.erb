@@ -5,13 +5,18 @@
 <meta content="en-us" http-equiv="Content-Language"/>
 <title>Web Font Specimen</title>
 <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/reset.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/960.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/fonts/all.css"/>
 <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/main_fonts.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/main.css" />
 </head>
 
 <body>
- <h1>Web Font Specimen</h1>
+<div id="header" class="container_16 clearfix">
+<div class="grid_16">
+	<h1>Web Font Specimen</h1>
+</div>
+  <div class="grid_16">
  <%  if fonts.empty? %>
  <p>No font directories found.</p>
  <p>This application expects fonts to be stored in named subdirectories in the "public/fonts" directory</p>
@@ -21,5 +26,7 @@
    <%= fonts.html_index %>
  </ul>
  <% end %>
+  </div>
+</div>
 </body>
 </html>

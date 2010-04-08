@@ -12,6 +12,7 @@ It was ported to Compass by [Eric Meyer](http://www.oddbird.net) And then the st
 * rework with css and ruby as needed instead of sass
 * auto-detect font directories based on convention rather than configuration
 * display index page as well as individual font pages
+* use specific font variants for bold and italic if they exist, rather than default em and strong handling
 
 Note this is more of a homage than a fork - I've reverted many files back from sass to css,
 and from haml to erb, so there isn't a lot of Robert Whitney's fine work left.
@@ -20,27 +21,32 @@ Mostly, as it seemed overkill to use sass to generate css this simple,
 when ruby string manipulation would do the job with somewhat clearer logic, at least clearer
 for people who don't know sass well.
 
-To make this work:
+How to use this app
+-------------------
 
-* make directories under 'public/fonts' for fonts and groups of fonts
-* the convention is
-* * any directory with no font files in it is a grouping
-* * any directory with font files in it is a font, and will be named after the directory name
-* * if a font directory has subdirectories with font files in them, they will be assumed to be sub-fonts
+You probably need a working knowledge of ruby and rubygems, I'm afraid.
 
-The expected structure is something like:
+* Make sure you have the 'sinatra' gem loaded - tested with 1.0, you also need 'rack' but it's a pre-requisite.
+* Get a set of fonts - the simplest way is to go to http://www.fontsquirrel.com/ , browse to the 'font-face kits' tab, and fetch a nice looking font or two.
+* Under the 'public/fonts' directory of this app, create a directory with the same name as your font, or something similar, e.g. "BergamoStd"
+* If your font has specific font files for Bold, Italic, etc, make directories under the main font for each variant, e.g. "BergamoStd/Bold", "BergamoStd/Italic", "BergamoStd/BoldItalic"
+* Unzip the font kit you grabbed earlier
+* Move or copy the font files (ttf, eot, svg etc) into the directories you created above - so the 'BergamoStd-Regular.ttf' file goes in "public/fonts/BergamoStd" and so on.
+* * avoid having font files for two different fonts in the same directory - this app won't cope nicely with this.  It wants one font per directory
+* * you can't have fonts, subfonts and sub-subfonts - fonts have a base directory, and optional subdirectories, but it only goes 2 levels deep.  Though you can make groupings, see below...
+* Repeat the above for any other fonts.
+* Start Sinatra with the command "rackup" from the project directory - this will start a simple webapp
+* Browse to http://localhost:9292/ - you will see all your fonts - click on one to see the Specimen page.
+* * If the font has children called "Bold" and "Italic", the specimen will actually use the child fonts for 'strong' and 'em' tags.
+* Control-C will kill the server when you are done.
 
-* public/fonts
-* * Serif
-* * * BergamoStd - containing the BergamoStd-Regular.ttf file, plus eot files etc
-* * * * Bold - containing the BergamoStd-Bold.ttf file, etc
-* * * * Italic - and so on
+Grouping
+--------
+For some sad reason, I decided to allow groups of fonts.  So instead of "public/fonts/BergamoStd" you can make a directory for Serif fonts, giving "public/fonts/Serif/BergamoStd" and "public/fonts/Serif/Prociono" etc.
 
-This will generate the following URLs:
+The reason this makes me sad is it broke lots of simple Sinatra and ERB code - I couldn't get erb to nicely generate nested structures of unknown depth, so I had to generate html from ruby code. yuck.
 
-* '/' with an index page showing previews of all the fonts
-* '/details/Serif/BergamoStd' showing the Specimen page for the standard font, *plus* it uses the Italic and Bold forms explicitly
-* '/details/Serif/BergamoStd/Bold' showing just the Bold font
-* '/details/Serif/BergamoStd/Italic' showing just the Italic font
+Anyway, this gives you a nice tree-structured index page, and lets you group fonts together.
+Maybe, one day I'll make it more like a tree, letting you open/close the groups - but I haven't done this so far, and it works as is, so don't hold your breath.
 
 *This is a work in progress - please be tolerant*
